@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { post } from "../api/http";
-import { saveAuth } from "../auth/storage";
+import { setAuth } from "../auth/storage";
 import { Link, useNavigate } from "react-router-dom";
 
 export default function Register() {
@@ -13,7 +13,7 @@ export default function Register() {
     setErr("");
     try {
       const data = await post("/auth/register", form);
-      saveAuth(data);
+      setAuth(data);
       nav("/");
     } catch (e) {
       setErr(e.message);

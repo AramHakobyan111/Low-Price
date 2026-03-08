@@ -1,4 +1,5 @@
-export const API_URL = "http://localhost:5000/api";
+export const API_URL =
+  import.meta.env.VITE_API_URL || "http://localhost:5050/api";
 
 export async function post(path, body) {
   const res = await fetch(`${API_URL}${path}`, {
@@ -34,7 +35,6 @@ export async function authPost(path, body, token) {
   return data;
 }
 
-
 export async function authPut(path, body, token) {
   const res = await fetch(`${API_URL}${path}`, {
     method: "PUT",
@@ -62,6 +62,7 @@ export async function authDelete(path, token) {
   if (!res.ok) throw new Error(data.message || "Request failed");
   return data;
 }
+
 export async function uploadImage(file, token) {
   const fd = new FormData();
   fd.append("image", file);
@@ -74,7 +75,6 @@ export async function uploadImage(file, token) {
     body: fd,
   });
 
-  // ⬇️ սա ավելացնում ենք debug-ի համար
   const text = await res.text();
 
   let data = {};
@@ -85,8 +85,10 @@ export async function uploadImage(file, token) {
   }
 
   if (!res.ok) {
-    throw new Error(`Upload failed (${res.status}): ${data.message || "No message"}`);
+    throw new Error(
+      `Upload failed (${res.status}): ${data.message || "No message"}`
+    );
   }
 
-  return data; // { url }
+  return data;
 }

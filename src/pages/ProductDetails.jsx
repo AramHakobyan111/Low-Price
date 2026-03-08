@@ -2,8 +2,9 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import Header from "../components/Header";
 import { useCart } from "../context/CartContext";
+import { formatAMD } from "../utils/currency";
 
-const API = "http://localhost:5000/api";
+const API = "http://localhost:5050/api";
 
 export default function ProductDetails() {
   const { id } = useParams();
@@ -22,18 +23,23 @@ export default function ProductDetails() {
     async function load() {
       setLoading(true);
       setErr("");
+
       try {
         const res = await fetch(url);
         const data = await res.json().catch(() => ({}));
+
         if (!res.ok) throw new Error(data.message || "Չհաջողվեց բեռնել");
+
         if (!ignore) setP(data);
 
-        // related products by category
         if (data?.category) {
-          const relRes = await fetch(`${API}/products?category=${data.category}&sort=new`);
+          const relRes = await fetch(
+            `${API}/products?category=${data.category}&sort=new`
+          );
           const relData = await relRes.json().catch(() => ([]));
           const list = Array.isArray(relData) ? relData : [];
           const filtered = list.filter((x) => x._id !== data._id).slice(0, 4);
+
           if (!ignore) setRelated(filtered);
         } else {
           if (!ignore) setRelated([]);
@@ -46,6 +52,7 @@ export default function ProductDetails() {
     }
 
     load();
+
     return () => {
       ignore = true;
     };
@@ -72,7 +79,6 @@ export default function ProductDetails() {
           <div className="mt-8 text-sm text-slate-600">Բեռնվում է…</div>
         ) : p ? (
           <>
-            {/* DETAILS */}
             <div className="mt-6 grid gap-6 lg:grid-cols-2">
               <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white">
                 <img
@@ -97,7 +103,7 @@ export default function ProductDetails() {
                   <div>
                     <div className="text-sm text-slate-500">Գին</div>
                     <div className="text-3xl font-bold text-sky-700">
-                      {p.price} ֏
+                      {formatAMD(p.price)}
                     </div>
                   </div>
 
@@ -112,22 +118,27 @@ export default function ProductDetails() {
                 <div className="mt-6">
                   <button
                     onClick={() => addToCart(p)}
-                    className="w-full rounded-2xl bg-sky-700 py-3 text-sm font-semibold text-white hover:bg-sky-800"
+                    disabled={(p.stock ?? 0) <= 0}
+                    className={`w-full rounded-2xl py-3 text-sm font-semibold text-white ${
+                      (p.stock ?? 0) <= 0
+                        ? "cursor-not-allowed bg-slate-300"
+                        : "bg-sky-700 hover:bg-sky-800"
+                    }`}
                   >
-                    Ավելացնել զամբյուղ
+                    {(p.stock ?? 0) <= 0 ? "Վերջացած է" : "Ավելացնել զամբյուղ"}
                   </button>
 
                   <div className="mt-3 grid grid-cols-2 gap-3">
                     <Link
                       to="/cart"
-                      className="text-center rounded-2xl border border-slate-200 bg-white py-3 text-sm font-semibold text-slate-900 hover:bg-slate-50"
+                      className="rounded-2xl border border-slate-200 bg-white py-3 text-center text-sm font-semibold text-slate-900 hover:bg-slate-50"
                     >
                       Գնալ զամբյուղ
                     </Link>
 
                     <Link
                       to="/products"
-                      className="text-center rounded-2xl border border-slate-200 bg-white py-3 text-sm font-semibold text-slate-900 hover:bg-slate-50"
+                      className="rounded-2xl border border-slate-200 bg-white py-3 text-center text-sm font-semibold text-slate-900 hover:bg-slate-50"
                     >
                       Շարունակել գնումը
                     </Link>
@@ -136,20 +147,15 @@ export default function ProductDetails() {
 
                 <div className="mt-6 rounded-2xl bg-slate-50 p-4 text-sm text-slate-600">
                   <div className="font-semibold text-slate-900">Նկարագրություն</div>
-                 <div className="mt-6 rounded-2xl bg-slate-50 p-4 text-sm text-slate-600">
-  <div className="font-semibold text-slate-900">Նկարագրություն</div>
-
-  <div className="mt-2 whitespace-pre-line">
-    {p.description?.trim()
-      ? p.description
-      : "Նկարագրություն չկա։"}
-  </div>
-</div>
+                  <div className="mt-2 whitespace-pre-line">
+                    {p.description?.trim()
+                      ? p.description
+                      : "Նկարագրություն չկա։"}
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* RELATED */}
             {related.length > 0 && (
               <div className="mt-10">
                 <h2 className="text-lg font-semibold text-slate-950">
@@ -168,12 +174,16 @@ export default function ProductDetails() {
                         alt={x.name}
                         className="h-40 w-full object-cover"
                       />
+
                       <div className="p-4">
-                        <div className="text-sm font-semibold text-slate-950 line-clamp-2">
+                        <div className="line-clamp-2 text-sm font-semibold text-slate-950">
                           {x.name}
                         </div>
+
                         <div className="mt-2 flex items-center justify-between">
-                          <span className="text-sky-700 font-bold">{x.price} ֏</span>
+                          <span className="font-bold text-sky-700">
+                            {formatAMD(x.price)}
+                          </span>
                           <span className="text-xs text-slate-500">
                             Առկա՝ {x.stock ?? 0}
                           </span>

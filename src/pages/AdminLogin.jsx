@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { post } from "../api/http";
-import { saveAuth } from "../auth/storage";
+import { setAuth } from "../auth/storage";
 import { useNavigate } from "react-router-dom";
 
 export default function AdminLogin() {
@@ -13,7 +13,7 @@ export default function AdminLogin() {
     setErr("");
     try {
       const data = await post("/auth/admin-login", form);
-      saveAuth(data);
+      setAuth(data);
       nav("/admin");
     } catch (e) {
       setErr(e.message);

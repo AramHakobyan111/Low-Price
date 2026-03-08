@@ -1,15 +1,18 @@
-const KEY = "lp_auth";
+const KEY = "lowprice_auth";
 
-export function saveAuth(payload) {
-  localStorage.setItem(KEY, JSON.stringify(payload));
+export function setAuth(data) {
+  localStorage.setItem(KEY, JSON.stringify(data));
 }
+
 export function getAuth() {
   try {
-    return JSON.parse(localStorage.getItem(KEY) || "null");
+    const raw = localStorage.getItem(KEY);
+    return raw ? JSON.parse(raw) : null;
   } catch {
     return null;
   }
 }
+
 export function clearAuth() {
   localStorage.removeItem(KEY);
 }

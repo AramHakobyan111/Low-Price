@@ -8,6 +8,12 @@ import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
 import Cart from "./pages/Cart";
 import ProductDetails from "./pages/ProductDetails";
+import Checkout from "./pages/Checkout";
+import PaymentSuccess from "./pages/PaymentSuccess";
+import AdminOrders from "./pages/AdminOrders";
+import OrderDetails from "./pages/OrderDetails";
+import MyOrders from "./pages/MyOrders";
+import MyOrderDetails from "./pages/MyOrderDetails";
 
 export default function App() {
   return (
@@ -27,6 +33,16 @@ export default function App() {
         <Route path="*" element={<Navigate to="/" replace />} />
 
         <Route path="/products/:id" element={<ProductDetails />} />
+
+        <Route path="/checkout" element={<Checkout />} />
+
+        <Route path="/payment-success" element={<PaymentSuccess />} />
+        <Route path="/admin/orders" element={<AdminOrders />} />
+        <Route path="/admin/orders/:id" element={<OrderDetails />} />
+
+        <Route path="/my-orders" element={<MyOrders />} />
+<Route path="/my-orders/:id" element={<MyOrderDetails />} />
+
       </Routes>
     </BrowserRouter>
   );

@@ -25,6 +25,7 @@ export default function AdminDashboard() {
     image: "",
     category: "",
     description: "",
+    featured: false,
   });
 
   // ADD upload

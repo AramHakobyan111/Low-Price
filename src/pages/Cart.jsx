@@ -1,98 +1,125 @@
 import Header from "../components/Header";
 import { useCart } from "../context/CartContext";
+import { Link } from "react-router-dom";
+import { formatAMD } from "../utils/currency";
 
 export default function Cart() {
-  const { items, removeFromCart, setQty, totalPrice, clearCart } = useCart();
+  const { items, removeFromCart, updateQty, totalPrice } = useCart();
+
+  if (!items.length) {
+    return (
+      <div className="min-h-screen bg-slate-50">
+        <Header />
+
+        <div className="mx-auto max-w-4xl px-4 py-10 text-center">
+          <h1 className="text-2xl font-bold text-slate-900">Զամբյուղ</h1>
+
+          <p className="mt-6 text-slate-600">Ձեր զամբյուղը դատարկ է</p>
+
+          <Link
+            to="/products"
+            className="mt-6 inline-block rounded-xl bg-sky-700 px-6 py-3 text-white hover:bg-sky-800"
+          >
+            Գնալ ապրանքների էջ
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-slate-50">
       <Header />
 
       <div className="mx-auto max-w-6xl px-4 py-8">
-        <h1 className="text-2xl font-bold text-slate-950">Զամբյուղ</h1>
+        <h1 className="text-2xl font-bold text-slate-900">Զամբյուղ</h1>
 
-        {!items.length ? (
-          <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-6 text-sm text-slate-600">
-            Զամբյուղը դատարկ է։
-          </div>
-        ) : (
-          <div className="mt-6 grid gap-4 lg:grid-cols-[1fr_360px]">
-            {/* Items */}
-            <div className="grid gap-3">
-              {items.map((x) => (
-                <div
-                  key={x._id}
-                  className="flex gap-4 rounded-3xl border border-slate-200 bg-white p-4"
-                >
-                  <img
-                    src={x.image || "/product1.png"}
-                    alt={x.name}
-                    className="h-20 w-20 rounded-2xl object-cover"
-                  />
+        <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_320px]">
+          <div className="space-y-4">
+            {items.map((item) => (
+              <div
+                key={item._id}
+                className="flex items-center gap-4 rounded-2xl border bg-white p-4"
+              >
+                <img
+                  src={item.image}
+                  alt={item.name}
+                  className="h-20 w-20 rounded-xl object-cover"
+                />
 
-                  <div className="flex-1">
-                    <div className="font-semibold text-slate-950">{x.name}</div>
-                    <div className="mt-1 text-sm text-sky-700 font-bold">
-                      {x.price} ֏
-                    </div>
+                <div className="flex-1">
+                  <h2 className="font-semibold text-slate-900">{item.name}</h2>
 
-                    <div className="mt-3 flex items-center gap-3">
-                      <button
-                        onClick={() => setQty(x._id, x.qty - 1)}
-                        className="h-9 w-9 rounded-xl border hover:bg-slate-50"
-                      >
-                        -
-                      </button>
+                  <p className="text-sm text-slate-600">
+                    {formatAMD(item.price)}
+                  </p>
 
-                      <input
-                        value={x.qty}
-                        onChange={(e) => setQty(x._id, e.target.value)}
-                        className="w-16 rounded-xl border px-3 py-2 text-center text-sm"
-                      />
+                  <p className="text-xs text-slate-500">
+                    Առկա՝ {item.stock ?? 0}
+                  </p>
 
-                      <button
-                        onClick={() => setQty(x._id, x.qty + 1)}
-                        className="h-9 w-9 rounded-xl border hover:bg-slate-50"
-                      >
-                        +
-                      </button>
+                  <div className="mt-2 flex items-center gap-2">
+                    <button
+                      onClick={() =>
+                        updateQty(item._id, Math.max(1, item.qty - 1))
+                      }
+                      className="rounded-lg border px-2 py-1"
+                    >
+                      -
+                    </button>
 
-                      <button
-                        onClick={() => removeFromCart(x._id)}
-                        className="ml-auto rounded-xl border border-red-200 px-4 py-2 text-xs font-semibold text-red-700 hover:bg-red-50"
-                      >
-                        Ջնջել
-                      </button>
-                    </div>
+                    <span className="px-3">{item.qty}</span>
+
+                    <button
+                      onClick={() => updateQty(item._id, item.qty + 1)}
+                      disabled={item.qty >= (item.stock ?? item.qty)}
+                      className={`rounded-lg border px-2 py-1 ${
+                        item.qty >= (item.stock ?? item.qty)
+                          ? "cursor-not-allowed opacity-50"
+                          : ""
+                      }`}
+                    >
+                      +
+                    </button>
                   </div>
                 </div>
-              ))}
-            </div>
 
-            {/* Summary */}
-            <div className="h-fit rounded-3xl border border-slate-200 bg-white p-5">
-              <div className="text-sm font-semibold text-slate-950">
-                Վճարման ամփոփում
+                <div className="text-right">
+                  <p className="font-bold text-slate-900">
+                    {formatAMD(item.price * item.qty)}
+                  </p>
+
+                  <button
+                    onClick={() => removeFromCart(item._id)}
+                    className="mt-2 text-sm text-red-600 hover:underline"
+                  >
+                    Հեռացնել
+                  </button>
+                </div>
               </div>
-
-              <div className="mt-4 flex items-center justify-between text-sm">
-                <span className="text-slate-600">Ընդհանուր</span>
-                <span className="font-bold text-slate-950">{totalPrice} ֏</span>
-              </div>
-
-              <button className="mt-4 w-full rounded-xl bg-sky-700 py-3 text-sm font-semibold text-white hover:bg-sky-800">
-                Անցնել վճարման
-              </button>
-
-              <button
-                onClick={clearCart}
-                className="mt-3 w-full rounded-xl border py-3 text-sm font-semibold hover:bg-slate-50"
-              >
-                Մաքրել զամբյուղը
-              </button>
-            </div>
+            ))}
           </div>
-        )}
+
+          <div className="h-fit rounded-2xl border bg-white p-5">
+            <h2 className="text-lg font-semibold text-slate-900">
+              Պատվերի ամփոփում
+            </h2>
+
+            <div className="mt-4 flex justify-between text-slate-700">
+              <span>Ընդհանուր</span>
+              <span className="font-bold text-sky-700">
+                {formatAMD(totalPrice)}
+              </span>
+            </div>
+
+            <Link
+              to="/checkout"
+              className="mt-5 block w-full rounded-xl bg-sky-700 py-3 text-center text-white hover:bg-sky-800"
+            >
+              Անցնել վճարման
+            </Link>
+          </div>
+        </div>
       </div>
     </div>
   );

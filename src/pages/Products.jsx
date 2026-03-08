@@ -2,8 +2,9 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import Header from "../components/Header";
 import { useCart } from "../context/CartContext";
+import { formatAMD } from "../utils/currency";
 
-const API = "http://localhost:5000/api";
+const API = "http://localhost:5050/api";
 
 const CATEGORY_OPTIONS = [
   { value: "", label: "Բոլոր կատեգորիաները" },
@@ -62,7 +63,6 @@ export default function Products() {
       <Header />
 
       <div className="mx-auto max-w-6xl px-4 py-8">
-        {/* TOP BAR */}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <h1 className="text-2xl font-bold text-slate-950">Ապրանքներ</h1>
@@ -72,7 +72,6 @@ export default function Products() {
           </div>
 
           <div className="grid w-full gap-2 sm:w-auto sm:grid-cols-3">
-            {/* Search */}
             <input
               value={q}
               onChange={(e) => setQ(e.target.value)}
@@ -80,7 +79,6 @@ export default function Products() {
               className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm outline-none"
             />
 
-            {/* Category */}
             <select
               value={category}
               onChange={(e) => setCategory(e.target.value)}
@@ -93,7 +91,6 @@ export default function Products() {
               ))}
             </select>
 
-            {/* Sort */}
             <select
               value={sort}
               onChange={(e) => setSort(e.target.value)}
@@ -106,14 +103,12 @@ export default function Products() {
           </div>
         </div>
 
-        {/* ERROR */}
         {err && (
           <div className="mt-5 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
             {err}
           </div>
         )}
 
-        {/* LOADING */}
         {loading ? (
           <div className="mt-8 text-sm text-slate-600">Բեռնվում է…</div>
         ) : items.length ? (
@@ -131,12 +126,14 @@ export default function Products() {
                 />
 
                 <div className="p-5">
-                  <div className="text-sm font-semibold text-slate-950 line-clamp-2">
+                  <div className="line-clamp-2 text-sm font-semibold text-slate-950">
                     {p.name}
                   </div>
 
                   <div className="mt-2 flex items-center justify-between">
-                    <span className="text-sky-700 font-bold">{p.price} ֏</span>
+                    <span className="font-bold text-sky-700">
+                      {formatAMD(p.price)}
+                    </span>
                     <span className="text-xs text-slate-500">
                       Առկա՝ {p.stock ?? 0}
                     </span>
@@ -147,9 +144,14 @@ export default function Products() {
                       e.preventDefault();
                       addToCart(p);
                     }}
-                    className="mt-3 w-full rounded-xl bg-sky-700 py-2 text-sm font-semibold text-white hover:bg-sky-800"
+                    disabled={(p.stock ?? 0) <= 0}
+                    className={`mt-3 w-full rounded-xl py-2 text-sm font-semibold text-white ${
+                      (p.stock ?? 0) <= 0
+                        ? "cursor-not-allowed bg-slate-300"
+                        : "bg-sky-700 hover:bg-sky-800"
+                    }`}
                   >
-                    Ավելացնել զամբյուղ
+                    {(p.stock ?? 0) <= 0 ? "Վերջացած է" : "Ավելացնել զամբյուղ"}
                   </button>
 
                   {p.category && (
