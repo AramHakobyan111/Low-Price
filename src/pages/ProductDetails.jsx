@@ -3,8 +3,9 @@ import { Link, useParams } from "react-router-dom";
 import Header from "../components/Header";
 import { useCart } from "../context/CartContext";
 import { formatAMD } from "../utils/currency";
+import { API_URL } from "../api/http";
 
-const API = "https://low-price-tfs7.onrender.com/api";
+
 
 export default function ProductDetails() {
   const { id } = useParams();

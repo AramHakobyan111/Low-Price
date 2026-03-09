@@ -3,8 +3,9 @@ import { Link } from "react-router-dom";
 import Header from "../components/Header";
 import { useCart } from "../context/CartContext";
 import { formatAMD } from "../utils/currency";
-http
-const API = "https://low-price-tfs7.onrender.com/api";
+import { API_URL } from "../api/http";
+
+
 
 const CATEGORY_OPTIONS = [
   { value: "", label: "Բոլոր կատեգորիաները" },

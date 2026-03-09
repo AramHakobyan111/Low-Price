@@ -1,5 +1,5 @@
 export const API_URL =
-  import.meta.env.VITE_API_URL || "https://localhost:5050/api";
+  import.meta.env.VITE_API_URL || "https://low-price-tfs7.onrender.com/api";
 
 export async function post(path, body) {
   const res = await fetch(`${API_URL}${path}`, {
