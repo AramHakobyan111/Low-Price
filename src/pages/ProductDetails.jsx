@@ -16,7 +16,7 @@ export default function ProductDetails() {
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState("");
 
-  const url = useMemo(() => `${API}/products/${id}`, [id]);
+  const url = useMemo(() => `${API_URL}/products/${id}`, [id]);
 
   useEffect(() => {
     let ignore = false;
@@ -35,8 +35,8 @@ export default function ProductDetails() {
 
         if (data?.category) {
           const relRes = await fetch(
-            `${API}/products?category=${data.category}&sort=new`
-          );
+  `${API_URL}/products?category=${data.category}&sort=new`
+);
           const relData = await relRes.json().catch(() => ([]));
           const list = Array.isArray(relData) ? relData : [];
           const filtered = list.filter((x) => x._id !== data._id).slice(0, 4);
