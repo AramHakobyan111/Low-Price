@@ -27,13 +27,13 @@ export default function Products() {
   const [err, setErr] = useState("");
 
   const url = useMemo(() => {
-    const params = new URLSearchParams();
-    if (q) params.set("q", q);
-    if (sort) params.set("sort", sort);
-    if (category) params.set("category", category);
-    const qs = params.toString();
-    return `${API}/products${qs ? `?${qs}` : ""}`;
-  }, [q, sort, category]);
+  const params = new URLSearchParams();
+  if (q) params.set("q", q);
+  if (sort) params.set("sort", sort);
+  if (category) params.set("category", category);
+  const qs = params.toString();
+  return `${API_URL}/products${qs ? `?${qs}` : ""}`;
+}, [q, sort, category]);
 
   useEffect(() => {
     let ignore = false;
