@@ -4,7 +4,7 @@ import Header from "../components/Header";
 import { useCart } from "../context/CartContext";
 import { formatAMD } from "../utils/currency";
 
-const API = "http://localhost:5050/api";
+const API = "https://low-price-tfs7.onrender.com/api";
 
 export default function ProductDetails() {
   const { id } = useParams();

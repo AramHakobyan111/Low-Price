@@ -3,8 +3,8 @@ import { Link } from "react-router-dom";
 import Header from "../components/Header";
 import { useCart } from "../context/CartContext";
 import { formatAMD } from "../utils/currency";
-
-const API = "http://localhost:5050/api";
+http
+const API = "https://low-price-tfs7.onrender.com/api";
 
 const CATEGORY_OPTIONS = [
   { value: "", label: "Բոլոր կատեգորիաները" },
